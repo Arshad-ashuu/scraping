@@ -92,6 +92,9 @@ def get_part_list(part_name, part_cat):
     elif(part_cat == "Shoes"):
         import categories.shoes
         file = categories.shoes
+    elif(part_cat == "cloths"):
+        import categories.cloths
+        file = categories.cloths    
     # A list to store All the list of Part Objects
     sites_part_list = []
     # Creating List for Storing Threads for each site

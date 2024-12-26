@@ -10,9 +10,7 @@ def scrape_site(site, part_name, soup):
     It returns list of Part objects corresponding to the given part name in a respective site
     It takes arguments site name, part name, BeautifulSoup object of site
     '''
-    if(site == "www.mdcomputers.in"):
-        site_function = mdcomp
-    elif(site == "www.amazon.in"):
+    if(site == "www.amazon.in"):
         site_function = amazon
     elif(site == "www.vedantcomputers.com"):
         site_function = vedcomp
@@ -90,19 +88,19 @@ def amazon(soup, part_name, site):
     It returns a list of Part objects satisfying the part name
     It takes Arguments BeautifulSoup object of amazon.in part search, part name
     '''
-    results = soup.findAll("div", {"class": "a-section a-spacing-medium"})
+    results = soup.findAll("div", {"class": "sg-col-inner"})
     part_list = []
     for item in results:
         try:
             title = item.find(
-                "span", {"class": "a-size-medium a-color-base a-text-normal"}).get_text().strip()
+                "span", {"h2": "a-size-base-plus a-spacing-none a-color-base a-text-normal"}).get_text().strip()
             price = item.find(
-                "span", {"class": "a-offscreen"}).get_text().strip()
+                "span", {"span": "a-price-whole"}).get_text().strip()
             link = "https://amazon.in" + \
                 item.find(
                     "a", {"class": "a-link-normal a-text-normal"})['href'].strip()
             img_link = item.find(
-                "div", {"class": "a-section aok-relative s-image-fixed-height"}).img["src"]
+                "div", {"class": "s-image"}).img["src"]
             flag = 0
             for word in part_name.split(" "):
                 if(word not in title.lower().split()):

@@ -1,0 +1,237 @@
+import requests
+from bs4 import BeautifulSoup
+
+parts_sites = {
+    "+": [
+        ("www.amazon.in", "https://www.amazon.in/s?k=item goes here"),
+        ("www.thesouledstore.com", "https://www.thesouledstore.com/search?q=item goes here"),
+        ("www.shoppersstop.com", "https://www.shoppersstop.com/search/result?q=item goes here"),
+        ("www.snitch.co.in", "https://www.snitch.co.in/search?q=item goes here"),
+    ]
+}
+
+def scrape_site(site, part_name):
+    ''' Function to call Parts Scraper for respective Site '''
+    if site == "www.amazon.in":
+        return amazon(part_name, site)
+    elif site == "www.thesouledstore.com":
+        return souled_store(part_name, site)
+    elif site == "www.shoppersstop.com":
+        return shoppers_stop(part_name, site)
+    elif site == "www.snitch.co.in":
+        return snitch(part_name, site)
+
+def amazon(part_name, site):
+    ''' Function to scrape Part from amazon.in '''
+    url = f"https://www.amazon.in/s?k={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "sg-col-inner"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("h2", {"class": "a-size-base-plus a-spacing-none a-color-base a-text-normal"}).get_text().strip()
+            price = item.find("span", {"class": "a-price-whole"}).get_text().strip()
+            link = "https://amazon.in" + item.find("a", {"class": "a-link-normal s-line-clamp-2 s-link-style a-text-normal"})['href'].strip()
+            img_link = item.find("img", {"class": "s-image"})['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def souled_store(part_name, site):
+    ''' Function to scrape Part from thesouledstore.com '''
+    url = f"https://www.thesouledstore.com/search?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "product-card"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("h5", {"class": "text-left"}).get_text().strip()
+            price = item.find("span", {"class": "offer"}).get_text().strip()
+            link = item.a['href'].strip()
+            img_link = item.find("img")['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def shoppers_stop(part_name, site):
+    ''' Function to scrape Part from shoppersstop.com '''
+    url = f"https://www.shoppersstop.com/search/result?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "bg-transparent"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("div", {"class": "line-clamp-2"}).get_text().strip()
+            price = item.find("div", {"class": "mt-2"}).find("span").get_text().strip()
+            link = item.a['href'].strip()
+            img_link = item.find("img")['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def snitch(part_name, site):
+    ''' Function to scrape Part from snitch.co.in '''
+    url = f"https://www.snitch.co.in/search?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "grid-view-item__link"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("p", {"class": "grid-view-item__title"}).get_text().strip()
+            price = item.find("span", {"class": "visually-hidden"}).next_sibling.strip()
+            link = "https://www.snitch.co.in" + item['href'].strip()
+            img_link = item.find("img", {"class": "lazyload"})['data-src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+ 
+import requests
+from bs4 import BeautifulSoup
+
+parts_sites = {
+    "+": [
+        ("www.amazon.in", "https://www.amazon.in/s?k=item goes here"),
+        ("www.thesouledstore.com", "https://www.thesouledstore.com/search?q=item goes here"),
+        ("www.shoppersstop.com", "https://www.shoppersstop.com/search/result?q=item goes here"),
+        ("www.snitch.co.in", "https://www.snitch.co.in/search?q=item goes here"),
+    ]
+}
+
+def scrape_site(site, part_name):
+    ''' Function to call Parts Scraper for respective Site '''
+    if site == "www.amazon.in":
+        return amazon(part_name, site)
+    elif site == "www.thesouledstore.com":
+        return souled_store(part_name, site)
+    elif site == "www.shoppersstop.com":
+        return shoppers_stop(part_name, site)
+    elif site == "www.snitch.co.in":
+        return snitch(part_name, site)
+
+def amazon(part_name):
+    ''' Function to scrape Part from amazon.in '''
+    url = f"https://www.amazon.in/s?k={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "s-main-slot s-result-list s-search-results sg-row"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("span", {"class": "a-size-medium a-color-base a-text-normal"}).get_text().strip()
+            price = item.find("span", {"class": "a-offscreen"}).get_text().strip()
+            link = "https://amazon.in" + item.find("a", {"class": "a-link-normal a-text-normal"})['href'].strip()
+            img_link = item.find("img")['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def souled_store(part_name):
+    ''' Function to scrape Part from thesouledstore.com '''
+    url = f"https://www.thesouledstore.com/search?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "product-card"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("h5", {"class": "text-left"}).get_text().strip()
+            price = item.find("span", {"class": "offer"}).get_text().strip()
+            link = item.a['href'].strip()
+            img_link = item.find("img")['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def shoppers_stop(part_name):
+    ''' Function to scrape Part from shoppersstop.com '''
+    url = f"https://www.shoppersstop.com/search/result?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "bg-transparent"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("div", {"class": "line-clamp-2"}).get_text().strip()
+            price = item.find("div", {"class": "mt-2"}).find("span").get_text().strip()
+            link = item.a['href'].strip()
+            img_link = item.find("img")['src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, site))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
+
+def snitch(part_name):
+    ''' Function to scrape Part from snitch.co.in '''
+    url = f"https://www.snitch.co.in/search?q={part_name}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    results = soup.findAll("div", {"class": "grid-view-item__link"})
+    part_list = []
+    
+    for item in results:
+        try:
+            title = item.find("p", {"class": "grid-view-item__title"}).get_text().strip()
+            price = item.find("span", {"class": "visually-hidden"}).next_sibling.strip()
+            link = "https://www.snitch.co.in" + item['href'].strip()
+            img_link = item.find("img", {"class": "lazyload"})['data-src']
+            
+            # Check if part_name is in title for exact matching
+            if part_name.lower() in title.lower():
+                part_list.append((title, price, link, img_link, "www.snitch.co.in"))
+        except Exception as e:
+            continue  # Handle exceptions gracefully
+    
+    return part_list
